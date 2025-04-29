@@ -1,1 +1,1 @@
-# Solar-Powered-Water-Irragation
+# Solar-Powered-Water-Irrigation
