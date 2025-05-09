@@ -53,8 +53,8 @@ void loop() {
     Serial.println("Out of range or read error.");
   }
 
-  // Soil moisture logic
-  if (soilMoistureValue < 300 && !alreadyWatered) {
+  // Soil moisture logic - Adjusted threshold to 200
+  if (soilMoistureValue < 400 && !alreadyWatered) {
     Serial.println("Soil is dry. Activating water pump and sending SMS...");
     sendSMS("Soil moisture is low! Watering the plants.");
     digitalWrite(RELAY_PIN, HIGH);
@@ -75,7 +75,7 @@ void loop() {
   readSMS(); // Check for incoming SMS
 
   Serial.println("Waiting for next reading...\n");
-  delay(1000); // 1 second delay before next loop
+  delay(5000); // 5 second delay before next loop
 }
 
 long getDistance() {
