@@ -67,9 +67,9 @@ void loop() {
   }
 
   // Obstacle detection logic
-  if (distance != -1 && distance < 40) {
-    Serial.println("Object detected within 40 cm. Sending SMS...");
-    sendSMS("Object detected within 40 cm!");
+  if (distance != -1 && distance > 10) {
+    Serial.println("Object detected within 10 cm. Sending SMS...");
+    sendSMS("Object detected within 10 cm!");
   }
 
   readSMS(); // Check for incoming SMS
