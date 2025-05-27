@@ -21,7 +21,9 @@ const char* phoneNumbers[] = {
 
 const int phoneCount = sizeof(phoneNumbers) / sizeof(phoneNumbers[0]);
 
-bool alreadyWatered = false;
+// Hysteresis thresholds
+const int moistureThresholdOn = 500;  // Turn ON watering
+const int moistureThresholdOff = 400;  // Turn OFF watering
 
 void setup() {
   Serial.begin(9600);
@@ -31,10 +33,9 @@ void setup() {
   pinMode(ECHO_PIN, INPUT);
   pinMode(RELAY_PIN, OUTPUT);
 
-  digitalWrite(RELAY_PIN, LOW);
+  digitalWrite(RELAY_PIN, LOW); // Initialize relay OFF
 
   Serial.println("System Initialized.");
-
   initializeGSM();
 }
 
@@ -53,29 +54,27 @@ void loop() {
     Serial.println("Out of range or read error.");
   }
 
-  // Soil moisture logic - Adjusted threshold to 200
-  if (soilMoistureValue < 400 && !alreadyWatered) {
-    Serial.println("Soil is dry. Activating water pump and sending SMS...");
-    sendSMS("Soil moisture is low! Watering the plants.");
-    digitalWrite(RELAY_PIN, HIGH);
-    delay(5000);
-    digitalWrite(RELAY_PIN, LOW);
-    alreadyWatered = true;
-    Serial.println("Watering done.");
-  } else if (soilMoistureValue > 400) {
-    alreadyWatered = false;
+  // Soil moisture logic with hysteresis
+  if (soilMoistureValue > moistureThresholdOn) {
+    Serial.println("Soil is dry. Activating water pump...");
+    digitalWrite(RELAY_PIN, LOW); // Turn ON watering
+  } else if (soilMoistureValue < moistureThresholdOff) {
+    Serial.println("Soil is moist. Deactivating water pump...");
+    digitalWrite(RELAY_PIN, HIGH); // Turn OFF watering
   }
 
   // Obstacle detection logic
-  if (distance != -1 && distance > 10) {
-    Serial.println("Object detected within 10 cm. Sending SMS...");
-    sendSMS("Object detected within 10 cm!");
+  if (distance != -1 && distance >= 10) {
+  Serial.println("Low water level detected! Turning off pump and sending SMS...");
+  digitalWrite(RELAY_PIN, HIGH); 
+  sendSMS("Alert: Low water level detected! Water pump turned off.");
   }
+
 
   readSMS(); // Check for incoming SMS
 
   Serial.println("Waiting for next reading...\n");
-  delay(5000); // 5 second delay before next loop
+  delay(500); // 2 second delay before next loop
 }
 
 long getDistance() {
