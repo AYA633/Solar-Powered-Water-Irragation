@@ -22,8 +22,8 @@ const char* phoneNumbers[] = {
 const int phoneCount = sizeof(phoneNumbers) / sizeof(phoneNumbers[0]);
 
 // Hysteresis thresholds
-const int moistureThresholdOn = 500;  // Turn ON watering
-const int moistureThresholdOff = 400;  // Turn OFF watering
+const int moistureThresholdOn = 500; 
+const int moistureThresholdOff = 400; 
 
 void setup() {
   Serial.begin(9600);
